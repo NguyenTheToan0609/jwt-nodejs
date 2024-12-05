@@ -1,5 +1,9 @@
-import { emit } from "nodemon";
-import connection from "../configs/connectDB";
+import { where } from "sequelize/lib/sequelize";
+import connection from "../config/connectDB";
+import db from "../models/index";
+import user from "../models/user";
+import { raw } from "body-parser";
+
 var bcrypt = require("bcryptjs");
 const salt = bcrypt.genSaltSync(10);
 
@@ -10,42 +14,65 @@ let hashPassWord = (password) => {
 
 let createNewUser = async (email, password, username) => {
   let hashPassWordUser = hashPassWord(password);
-
-  let [results, field] = await connection.execute(
-    `insert into users (email , password , username) VALUES (? , ? , ?)`,
-    [email, hashPassWordUser, username]
-  );
-  return results;
+  try {
+    await db.User.create({
+      email: email,
+      password: hashPassWordUser,
+      username: username,
+    });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 let getAllUser = async () => {
-  let [results, field] = await connection.execute(`select *from users`);
+  let results = await db.User.findAll();
   return results;
 };
 
 let deleteUser = async (userId) => {
-  let [results, field] = await connection.execute(
-    `delete from users where id = ? `,
-    [userId]
-  );
-  return results;
+  // let [results, field] = await connection.execute(
+  //   `delete from user where id = ? `,
+  //   [userId]
+  // );
+  await db.User.destroy({
+    where: {
+      id: userId,
+    },
+  });
+  // return results;
 };
 
 let getEditUserId = async (userId) => {
-  let [results, field] = await connection.execute(
-    `select * from users where id = ? `,
-    [userId]
-  );
-  let user = results && results.length > 0 ? results[0] : {};
+  // let [results, field] = await connection.execute(
+  //   `select * from user where id = ? `,
+  //   [userId]
+  // );
+  let user = {};
+  user = await db.User.findOne({
+    where: {
+      id: userId,
+    },
+    raw: true,
+  });
   return user;
 };
 
 let postUpdateUser = async (email, username, userId) => {
-  let [results, field] = await connection.execute(
-    `update users set email = ? , username = ? where id = ? `,
-    [email, username, userId]
+  // let [results, field] = await connection.execute(
+  //   `update user set email = ? , username = ? where id = ? `,
+  //   [email, username, userId]
+  // );
+  // return results;
+
+  await db.User.update(
+    { email: email, username: username },
+    {
+      where: {
+        id: userId,
+      },
+    }
   );
-  return results;
 };
 
 module.exports = {
