@@ -1,20 +1,22 @@
 "use strict";
 const { Model } = require("sequelize");
 module.exports = (sequelize, DataTypes) => {
-  class group extends Model {
+  class Group extends Model {
     static associate(models) {
       // define association here
+      Group.hasMany(models.User);
+      Group.belongsToMany(models.Role, { through: "Group_Role" });
     }
   }
-  group.init(
+  Group.init(
     {
       name: DataTypes.STRING,
       description: DataTypes.STRING,
     },
     {
       sequelize,
-      modelName: "group",
+      modelName: "Group",
     }
   );
-  return group;
+  return Group;
 };
