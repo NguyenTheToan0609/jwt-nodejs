@@ -1,11 +1,4 @@
-import { registerNewUser } from "../services/UserService";
-
-let getApi = (req, res) => {
-  return res.status(200).json({
-    message: "ok",
-    data: "test api",
-  });
-};
+import { registerNewUser, handleUserLogin } from "../services/UserService";
 
 const handleRegister = async (req, res) => {
   try {
@@ -39,7 +32,24 @@ const handleRegister = async (req, res) => {
   }
 };
 
+const handleLogin = async (req, res) => {
+  try {
+    let data = await handleUserLogin(req.body);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (error) {
+    console(error);
+    return res.status(500).json({
+      EM: "Lỗi Server",
+      EC: -1,
+    });
+  }
+};
+
 module.exports = {
-  getApi,
   handleRegister,
+  handleLogin,
 };

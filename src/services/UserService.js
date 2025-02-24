@@ -1,7 +1,7 @@
 import { where } from "sequelize/lib/sequelize";
 import db from "../models/index";
 var bcrypt = require("bcryptjs");
-
+import { Op } from "sequelize";
 const salt = bcrypt.genSaltSync(10);
 
 const checkEmail = async (userEmail) => {
@@ -71,6 +71,43 @@ const registerNewUser = async (userData) => {
   }
 };
 
+const checkPassword = (inputPassword, hashPassWord) => {
+  return bcrypt.compareSync(inputPassword, hashPassWord);
+};
+
+const handleUserLogin = async (data) => {
+  try {
+    let user = await db.User.findOne({
+      where: {
+        [Op.or]: [{ email: data.valueLogin }, { phone: data.valueLogin }],
+      },
+    });
+    if (user) {
+      let isCorrectPassrord = checkPassword(data.password, user.password);
+      if (isCorrectPassrord === true) {
+        return {
+          EM: "Dang nhap thanh cong",
+          EC: 0,
+          DT: "",
+        };
+      }
+    }
+    return {
+      EM: "email/Phone hoac mat khau khong chinh xac",
+      EC: 1,
+      DT: "",
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Loi Server",
+      EC: -2,
+      DT: "",
+    };
+  }
+};
+
 module.exports = {
   registerNewUser,
+  handleUserLogin,
 };
