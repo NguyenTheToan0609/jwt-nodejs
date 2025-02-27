@@ -1,4 +1,3 @@
-import { where } from "sequelize/lib/sequelize";
 import db from "../models/index";
 var bcrypt = require("bcryptjs");
 import { Op } from "sequelize";
@@ -110,4 +109,7 @@ const handleUserLogin = async (data) => {
 module.exports = {
   registerNewUser,
   handleUserLogin,
+  checkEmail,
+  checkPhone,
+  checkPassword,
 };

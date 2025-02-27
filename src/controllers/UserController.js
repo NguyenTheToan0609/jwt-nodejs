@@ -52,6 +52,8 @@ const createFunc = async (req, res) => {
 
 const updateFunc = async (req, res) => {
   try {
+    let data = await updateUser(req.body);
+
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,

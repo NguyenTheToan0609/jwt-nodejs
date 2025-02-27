@@ -1,5 +1,8 @@
 import { where } from "sequelize/dist/index.js";
 import db from "../models/index";
+var bcrypt = require("bcryptjs");
+import { checkEmail, checkPhone, checkPassword } from "./UserService";
+const salt = bcrypt.genSaltSync(10);
 
 const getAllUser = async () => {
   try {
@@ -35,10 +38,11 @@ const getUserWithPagination = async (page, limit) => {
   try {
     let offset = (page - 1) * limit;
     const { count, rows } = await db.User.findAndCountAll({
-      attributes: ["id", "username", "email", "phone", "sex"],
-      include: { model: db.Group, attributes: ["name", "description"] },
+      attributes: ["id", "username", "email", "phone", "sex", "address"],
+      include: { model: db.Group, attributes: ["name", "description", "id"] },
       offset: offset,
       limit: limit,
+      order: [["id", "DESC"]],
     });
 
     let totalPages = Math.ceil(count / limit);
@@ -65,7 +69,31 @@ const getUserWithPagination = async (page, limit) => {
 
 const createNewUser = async (data) => {
   try {
-    await db.User.create(data);
+    let isCheckEmail = await checkEmail(data.email);
+    if (isCheckEmail === true) {
+      return {
+        EM: "email da ton tai",
+        EC: 1,
+        DT: "email",
+      };
+    }
+
+    let isCheckPhone = await checkPhone(data.phone);
+    if (isCheckPhone === true) {
+      return {
+        EM: "So dien thoai da ton tai",
+        EC: 2,
+        DT: "email",
+      };
+    }
+
+    let hashPassWord = (password) => {
+      let results = bcrypt.hashSync(password, salt);
+      return results;
+    };
+    let hashPassWordUser = hashPassWord(data.password);
+
+    await db.User.create({ ...data, password: hashPassWordUser });
     return {
       EM: " create new user success",
       EC: 0,
