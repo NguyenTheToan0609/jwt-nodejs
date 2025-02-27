@@ -2,6 +2,7 @@ import {
   getAllUser,
   getUserWithPagination,
   deleteUser,
+  createNewUser,
 } from "../services/userApiService";
 
 const readFunc = async (req, res) => {
@@ -34,6 +35,7 @@ const readFunc = async (req, res) => {
 
 const createFunc = async (req, res) => {
   try {
+    let data = await createNewUser(req.body);
     return res.status(200).json({
       EM: data.EM,
       EC: data.EC,
