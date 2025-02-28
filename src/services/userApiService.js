@@ -111,17 +111,47 @@ const createNewUser = async (data) => {
 
 const updateUser = async (data) => {
   try {
+    if (!data.groupId) {
+      return {
+        EM: "error groupId",
+        EC: 1,
+        DT: "groupId",
+      };
+    }
+
     let user = await db.User.findOne({
       where: { id: data.id },
     });
     if (user) {
       //update
-      user.save();
+      await user.update({
+        username: data.username,
+        address: data.address,
+        sex: data.sex,
+        groupId: data.groupId,
+      });
+
+      await user.save();
+      return {
+        EM: "update user success",
+        EC: 0,
+        DT: "",
+      };
     } else {
       //not found
+      return {
+        EM: "not found user",
+        EC: 0,
+        DT: "",
+      };
     }
   } catch (error) {
     console.log(error);
+    return {
+      EM: "error Server",
+      EC: 2,
+      DT: "",
+    };
   }
 };
 

@@ -3,6 +3,7 @@ import {
   getUserWithPagination,
   deleteUser,
   createNewUser,
+  updateUser,
 } from "../services/userApiService";
 
 const readFunc = async (req, res) => {
