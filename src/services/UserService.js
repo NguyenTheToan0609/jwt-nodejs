@@ -2,7 +2,9 @@ import db from "../models/index";
 var bcrypt = require("bcryptjs");
 import { Op } from "sequelize";
 const salt = bcrypt.genSaltSync(10);
-
+import { getGroupWithRoles } from "../services/JWTService";
+import { createJWT } from "../middleware/JWTAction";
+require("dotenv").config();
 const checkEmail = async (userEmail) => {
   let user = await db.User.findOne({
     where: { email: userEmail },
@@ -56,6 +58,7 @@ const registerNewUser = async (userData) => {
       username: userData.username,
       phone: userData.phone,
       password: hashPassWordUser,
+      groupId: 4,
     });
 
     return {
@@ -84,10 +87,21 @@ const handleUserLogin = async (data) => {
     if (user) {
       let isCorrectPassrord = checkPassword(data.password, user.password);
       if (isCorrectPassrord === true) {
+        let groupWithRoles = await getGroupWithRoles(user);
+
+        let payload = {
+          email: user.email,
+          groupWithRoles,
+          expiresIn: process.env.JWT_EXPIRESIN,
+        };
+        let token = createJWT(payload);
         return {
           EM: "Dang nhap thanh cong",
           EC: 0,
-          DT: "",
+          DT: {
+            access_token: token,
+            data: groupWithRoles,
+          },
         };
       }
     }
