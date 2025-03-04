@@ -4,6 +4,7 @@ import viewEngine from "./config/viewEngine";
 import webRoutes from "./routes/web";
 import apiRoutes from "./routes/api";
 import configCors from "./config/cors";
+import cookieParser from "cookie-parser";
 
 require("dotenv").config();
 
@@ -11,6 +12,8 @@ let app = express();
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
+app.use(cookieParser());
 
 let port = process.env.PORT || 8081;
 
