@@ -10,6 +10,7 @@ let initApiRoutes = (app) => {
   router.post("/login", apiController.handleLogin);
 
   router.all("*", checkUserJWT, checkUserPermission);
+  router.get("/account", userController.getUserAccount);
   router.get("/user/read", userController.readFunc);
   router.post("/user/create", userController.createFunc);
   router.put("/user/update", userController.updateFunc);
