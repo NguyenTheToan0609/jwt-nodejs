@@ -20,7 +20,7 @@ const verifyToken = (token) => {
   let key = process.env.JWT_SECRET;
   let decoded = null;
   try {
-    decoded = jwt.verify(token, key);
+    decoded = jwt.verify(token, key, { expiresIn: process.env.JWT_EXPIRESIN });
   } catch (error) {
     console.log(e);
   }
