@@ -8,6 +8,7 @@ let router = express.Router();
 let initApiRoutes = (app) => {
   router.post("/register", apiController.handleRegister);
   router.post("/login", apiController.handleLogin);
+  router.post("/logout", apiController.handleLogOut);
 
   router.all("*", checkUserJWT, checkUserPermission);
   router.get("/account", userController.getUserAccount);

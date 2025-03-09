@@ -1,3 +1,4 @@
+import req from "express/lib/request";
 import { registerNewUser, handleUserLogin } from "../services/UserService";
 require("dotenv").config();
 const handleRegister = async (req, res) => {
@@ -55,7 +56,25 @@ const handleLogin = async (req, res) => {
   }
 };
 
+const handleLogOut = (req, res) => {
+  try {
+    res.clearCookie("jwt");
+    return res.status(200).json({
+      EM: "ok",
+      EC: 0,
+      DT: "",
+    });
+  } catch (error) {
+    console(error);
+    return res.status(500).json({
+      EM: "Lỗi Server",
+      EC: -1,
+    });
+  }
+};
+
 module.exports = {
   handleRegister,
   handleLogin,
+  handleLogOut,
 };
