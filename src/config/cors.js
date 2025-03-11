@@ -1,8 +1,11 @@
 require("dotenv").config();
+
 const configCors = (app) => {
   app.use(function (req, res, next) {
     // Website you wish to allow to connect
-    res.setHeader("Access-Control-Allow-Origin", process.env.REACT_URL);
+    const allowedOrigin = process.env.REACT_URL || "http://localhost:3000"; // Fallback if REACT_URL is not set
+
+    res.setHeader("Access-Control-Allow-Origin", allowedOrigin);
 
     // Request methods you wish to allow
     res.setHeader(
@@ -16,9 +19,13 @@ const configCors = (app) => {
       "X-Requested-With,content-type"
     );
 
-    // Set to true if you need the website to include cookies in the requests sent
-    // to the API (e.g. in case you use sessions)
+    // Allow credentials (cookies, authorization headers)
     res.setHeader("Access-Control-Allow-Credentials", true);
+
+    // If the method is OPTIONS, respond with 200 OK
+    if (req.method === "OPTIONS") {
+      return res.status(200).end();
+    }
 
     // Pass to next layer of middleware
     next();
