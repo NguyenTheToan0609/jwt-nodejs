@@ -1,19 +1,17 @@
+import { where } from "sequelize/lib/sequelize";
 import db from "../models/index";
 
 const createNewRole = async (roles) => {
   try {
-    // Fetch all existing roles in the database
     let currentRoles = await db.Role.findAll({
       attributes: ["url", "description"],
       raw: true,
     });
 
-    // Filter out the roles that already exist in the database
     const persist = roles.filter(
       ({ url: url1 }) => !currentRoles.some(({ url: url2 }) => url1 === url2)
     );
 
-    // If no new roles need to be created
     if (persist.length === 0) {
       return {
         EM: "Nothing to create ... ",
@@ -21,13 +19,12 @@ const createNewRole = async (roles) => {
         DT: [],
       };
     } else {
-      // Create the new roles in the database
       await db.Role.bulkCreate(persist);
 
       return {
         EM: `Create success: ${persist.length} roles ...`,
         EC: 0,
-        DT: persist, // Returning the created roles as data
+        DT: persist,
       };
     }
   } catch (error) {
@@ -40,6 +37,59 @@ const createNewRole = async (roles) => {
   }
 };
 
+const getAllRole = async () => {
+  try {
+    let roles = await db.Role.findAll({
+      order: [["id", "DESC"]],
+    });
+    if (roles) {
+      return {
+        EM: "get data role success",
+        EC: 0,
+        DT: roles,
+      };
+    } else {
+      return {
+        EM: "get data role success",
+        EC: 0,
+        DT: [],
+      };
+    }
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Error from Server",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
+const deleteRole = async (id) => {
+  try {
+    let roles = await db.Role.findOne({
+      where: { id: id },
+    });
+    if (roles) {
+      await roles.destroy();
+    }
+    return {
+      EM: "Delete role success",
+      EC: 0,
+      DT: [],
+    };
+  } catch (error) {
+    console.log(error);
+    return {
+      EM: "Error from Server",
+      EC: 1,
+      DT: [],
+    };
+  }
+};
+
 module.exports = {
   createNewRole,
+  getAllRole,
+  deleteRole,
 };

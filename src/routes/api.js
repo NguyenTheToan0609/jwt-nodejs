@@ -22,10 +22,10 @@ let initApiRoutes = (app) => {
   router.get("/group/read", groupController.readFunc);
 
   //roles routes
-  // router.get("/role/read", roleController.readFunc);
+  router.get("/role/read", roleController.readFunc);
   router.post("/role/create", roleController.createFunc);
   // router.put("/role/update", roleController.updateFunc);
-  // router.delete("/role/delete", roleController.deleteFunc);
+  router.delete("/role/delete", roleController.deleteFunc);
 
   return app.use("/api/v1/", router);
 };

@@ -1,4 +1,26 @@
-import { createNewRole } from "../services/RoleApiService";
+import {
+  createNewRole,
+  getAllRole,
+  deleteRole,
+} from "../services/RoleApiService";
+
+const readFunc = async (req, res) => {
+  try {
+    let data = await getAllRole();
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "Lỗi Server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
 
 const createFunc = async (req, res) => {
   try {
@@ -17,6 +39,26 @@ const createFunc = async (req, res) => {
   }
 };
 
+const deleteFunc = async (req, res) => {
+  try {
+    let data = await deleteRole(req.body.id);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "Lỗi Server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   createFunc,
+  readFunc,
+  deleteFunc,
 };
