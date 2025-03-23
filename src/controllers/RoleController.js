@@ -3,6 +3,7 @@ import {
   getAllRole,
   deleteRole,
   getRolesByGroup,
+  assignRolesToGroup,
 } from "../services/RoleApiService";
 
 const readFunc = async (req, res) => {
@@ -77,9 +78,28 @@ const getRoleByGroup = async (req, res) => {
   }
 };
 
+const assignRoleToGroup = async (req, res) => {
+  try {
+    let data = await assignRolesToGroup(req.body.data);
+    return res.status(200).json({
+      EM: data.EM,
+      EC: data.EC,
+      DT: data.DT,
+    });
+  } catch (e) {
+    console.log(e);
+    return res.status(500).json({
+      EM: "Lỗi Server",
+      EC: -1,
+      DT: "",
+    });
+  }
+};
+
 module.exports = {
   createFunc,
   readFunc,
   deleteFunc,
   getRoleByGroup,
+  assignRoleToGroup,
 };
